@@ -1,20 +1,31 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 import time
 
-# Open Safari Browser (Desktop Mode)
-driver = webdriver.Safari()
+# Open Chrome Browser (Desktop Mode)
+driver = webdriver.Chrome()
 driver.maximize_window()
 
-# Step 1: Directly navigate to OrangeHRM demo login page
-driver.get("https://opensource-demo.orangehrmlive.com/")
+# Step 1: Open Google
+driver.get("https://www.google.com")
 time.sleep(2)
 
-# Step 2: Verify we are on the login page
+# Step 2: Search for "OrangeHRM demo login"
+search_box = driver.find_element(By.NAME, "q")
+search_box.send_keys("OrangeHRM demo login")
+search_box.send_keys(Keys.RETURN)
+time.sleep(3)
+
+# Step 3: Click the first search result
+first_result = driver.find_element(By.XPATH, "(//h3)[1]")
+first_result.click()
+time.sleep(3)
+
+# Step 4: Verify we are on the login page
 assert "orangehrmlive.com" in driver.current_url, "Not on the correct login page!"
 
-# Step 3: Enter login credentials
+# Step 5: Enter login credentials
 username_field = driver.find_element(By.NAME, "username")
 password_field = driver.find_element(By.NAME, "password")
 login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
@@ -24,11 +35,12 @@ password_field.send_keys("admin123")
 login_button.click()
 time.sleep(5)
 
-# Step 4: Validate login success
+# Step 6: Validate login success
 assert "dashboard" in driver.current_url.lower(), "Login Failed!"
 print("✅ Login successful on Desktop!")
+time.sleep(3)
 
-# Step 5: Click all the options in the left sidebar and validate (excluding "Maintenance")
+# Step 7: Click all the options in the left sidebar and validate (excluding "Maintenance")
 sidebar_xpath = '//*[@id="app"]/div[1]/div[1]/aside/nav/div[2]/ul/li/a'
 
 # Get the number of sidebar elements
@@ -46,7 +58,7 @@ for i in range(len(sidebar_elements)):
 
     # **Skip the "Maintenance" option**
     if option_name.lower() == "maintenance":
-        print("Skipping Maintenance section...")
+        print(" Skipping Maintenance section...")
         continue
 
     if option_name:  # Ensure it's a valid option
@@ -62,5 +74,5 @@ for i in range(len(sidebar_elements)):
         except:
             print(f"⚠️ Could not validate {option_name} via heading, skipping validation.")
 
-# Step 6: Close the browser
+# Step 8: Close the browser
 driver.quit()
